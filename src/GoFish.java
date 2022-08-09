@@ -6,9 +6,14 @@ public class GoFish {
     private ArrayList<Card> availableCards = new ArrayList<>();
     private ArrayList<Card> myHand = new ArrayList<>();
     private ArrayList<Card> opponentHand = new ArrayList<>();
+    private ArrayList<Card> myMatches = new ArrayList<>();
+    private ArrayList<Card> opponentMatches = new ArrayList<>();
     private boolean noCards = false;
 
     public GoFish() {
+
+        // INITIALIZING CARD SET
+
         int cardNum = 1; //card number
         int suit = 1; //card suit
 
@@ -29,6 +34,39 @@ public class GoFish {
             }
             suit++;
         }
+
+        // CREATING HANDS
+
+        for (int i = 0; i < 7; i++) {
+            fishForCard(myHand);
+            fishForCard(opponentHand);
+        }
+
+    }
+
+    public String displayHand(ArrayList<Card> hand) {
+
+        // BUBBLE SORT - puts cards in order
+
+
+
+        // HAND DISPLAY
+
+        String currentCards = "";
+        int cardCount = 0;
+
+        for (int i = 0; i < hand.size(); i++) {
+            if (cardCount == 6) {
+                System.out.println();
+                cardCount = 0;
+            }
+
+            currentCards += (hand.get(i).toString() + ", ");
+            cardCount++;
+        }
+
+        currentCards = currentCards.substring(0, currentCards.length() - 2);
+        return currentCards;
     }
 
     public Card fishForCard(ArrayList<Card> hand) {
@@ -55,30 +93,63 @@ public class GoFish {
         return newCard;
     }
 
+    public void checkMatches(ArrayList<Card> hand) {
+        int matchCount = 0;
+
+        for (int i = 0; i < myHand.size(); i++) {
+            if (matchCount == 4);
+            //if ()
+        }
+    }
+
     public static void main(String[] args) {
         GoFish game = new GoFish();
-//        for (int i = 0; i < game.availableCards.size(); i++) {
-//            System.out.println(game.availableCards.get(i).toString());
-//        }
 
-        for (int i = 0; i < 52; i++) {
-            game.fishForCard(game.myHand);
-        }
+        Scanner scanner = new Scanner(System.in);
+        String response = "";
+        int replyNum = 0;
 
-        game.fishForCard(game.myHand);
+        int dumbCounter = 0;
 
-        System.out.println(game.noCards);
+        System.out.println("Welcome to Go Fish!");
 
-        if (!game.noCards) {
-            game.fishForCard(game.myHand);
-        } else {
-            System.out.println("There are no more cards!");
-        }
+        do {
+            System.out.println("Start game? (y/n)");
+            response = scanner.nextLine();
 
-//        for (int i = 0; i < game.myHand.size(); i++) {
-//            System.out.printf(game.myHand.get(i).toString());
-//            System.out.println();
-//        }
+            if (response.toLowerCase().equals("y") || response.toLowerCase().equals("yes")) {
+                break;
+            } else if (response.toLowerCase().equals("n") || response.toLowerCase().equals("no")) {
+                System.out.println("Okay, take your time. I guess.\n\n\n");
+            } else {
+
+                if (dumbCounter >= 3) {
+                    System.out.println("That's it. You're too dumb to play this game. No Go Fish for you.");
+                    return;
+                }
+
+                System.out.println("Invalid input, I said (y/n), didn't I?\n");
+                dumbCounter++;
+            }
+        } while (true);
+
+        System.out.println("\nOkay cool, I'll start the game for you now.......");
+
+        do {
+
+            if (game.myHand.isEmpty()) {
+                System.out.println("You have no cards!");
+            } else {
+                System.out.println("This is your hand:");
+                System.out.printf(game.displayHand(game.myHand));
+            }
+            break;
+
+
+
+        } while (true);
+
+
 
     }
 }
