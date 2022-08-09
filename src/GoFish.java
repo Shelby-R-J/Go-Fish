@@ -48,7 +48,16 @@ public class GoFish {
 
         // BUBBLE SORT - puts cards in order
 
+        for (int i = 0; i < hand.size() - 1; i++) {
 
+            for (int j = 1; j < hand.size() - i; j++) {
+                if (hand.get(j - 1).getNum() > hand.get(j).getNum()) {
+                    Card temp = hand.get(j - 1);
+                    hand.set(j - 1, hand.get(j));
+                    hand.set(j, temp);
+                }
+            }
+        }
 
         // HAND DISPLAY
 
