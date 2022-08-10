@@ -76,7 +76,7 @@ public class GoFish {
     public String displayMatches(ArrayList<Integer> matches) {
         // HAND DISPLAY
 
-        String currentCards = "";
+        String currentCards = "\nYou have four of these cards:\n";
         int cardCount = 0;
 
         for (int i = 0; i < matches.size(); i++) { // printing each card
@@ -102,6 +102,7 @@ public class GoFish {
 
         if (cardCount != 0) {
             currentCards = currentCards.substring(0, currentCards.length() - 2); // removing end comma and space
+            currentCards += "\n";
             return currentCards;
         } else {
             return ("You don't have any matches yet.");
@@ -145,11 +146,11 @@ public class GoFish {
                         for (int k = 0; k < 4; k++) {
                             myHand.remove(i);
                         }
-                        matchCount = 1;
+                        i -= 1;
                         anyMatches = true;
                     }
                 }
-                i += matchCount - 1;
+
                 matchCount = 1;
             }
         }
@@ -195,7 +196,7 @@ public class GoFish {
 
         // CREATING HANDS
 
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 51; i++) {
             game.fishForCard(game.myHand);
             //game.fishForCard(game.opponentHand);
         }
@@ -227,6 +228,9 @@ public class GoFish {
                     }
 
                 }
+            } else if (choice.equals("2")) {
+                game.fishForCard(game.myHand);
+
             } else if (choice.equals("3")) {
                 System.out.println(game.displayMatches(game.myMatches));
             }
@@ -238,6 +242,14 @@ public class GoFish {
 
 
         } while (true);
+
+        System.out.println("--------------GAME OVER--------------\n");
+
+        if (game.myMatches.size() > game.opponentMatches.size()) {
+            System.out.println("Congratulations, you won!!!");
+        } else {
+            System.out.println("Sorry, you lost...");
+        }
 
 
 
