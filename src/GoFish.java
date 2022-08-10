@@ -76,7 +76,7 @@ public class GoFish {
     public String displayMatches(ArrayList<Integer> matches) {
         // HAND DISPLAY
 
-        String currentCards = "\nYou have four of these cards:\n";
+        String currentCards = "\nThere are four of these cards:\n";
         int cardCount = 0;
 
         for (int i = 0; i < matches.size(); i++) { // printing each card
@@ -105,7 +105,7 @@ public class GoFish {
             currentCards += "\n";
             return currentCards;
         } else {
-            return ("You don't have any matches yet.");
+            return ("No matches found.");
         }
 
     }
@@ -132,8 +132,8 @@ public class GoFish {
         boolean anyMatches = false;
         int matchCount = 1;
 
-        for (int i = 0; i < myHand.size(); i++) { // each number in hand
-            if (myHand.size() - i > 3) {
+        for (int i = 0; i < hand.size(); i++) { // each number in hand
+            if (hand.size() - i > 3) {
                 for (int j = 1; j < 4; j++) { // compares to every number after
                     if (hand.get(i).getNum() == hand.get(i + j).getNum()) {
                         matchCount++;
@@ -142,9 +142,9 @@ public class GoFish {
                     }
 
                     if (matchCount == 4) {
-                        matches.add(myHand.get(i).getNum());
+                        matches.add(hand.get(i).getNum());
                         for (int k = 0; k < 4; k++) {
-                            myHand.remove(i);
+                            hand.remove(i);
                         }
                         i -= 1;
                         anyMatches = true;
@@ -196,22 +196,27 @@ public class GoFish {
 
         // CREATING HANDS
 
-        for (int i = 0; i < 51; i++) {
+        for (int i = 0; i < 26; i++) {
             game.fishForCard(game.myHand);
-            //game.fishForCard(game.opponentHand);
+            game.fishForCard(game.opponentHand);
         }
 
         // TURN LOOP
 
         do {
+            if (game.myMatches.size() + game.opponentMatches.size() == 13) {
+                break;
+            }
+
             String choice = "";
 
-            System.out.println("1) View hand   2) Ask for card   3) View my matches   4) View my matches");
+            System.out.println("1) View hand   2) Ask for card   3) View my matches   4) View opponent's matches");
             choice = scanner.nextLine();
 
-            if (choice.equals("1")) {
+            if (choice.equals("1")) {               // VIEW HAND
                 if (game.myHand.isEmpty()) {
                     System.out.println("You have no cards.");
+
                 } else {
                     System.out.println("\nThis is your hand:"); // printing hand
                     game.sortHand(game.myHand);
@@ -219,7 +224,7 @@ public class GoFish {
 
                     System.out.println(); // new line
 
-                    boolean anyMatches = game.checkMatches(game.myHand, game.myMatches); // any matches? if so pring
+                    boolean anyMatches = game.checkMatches(game.myHand, game.myMatches); // any matches? if so print
                     System.out.println();
                     if (anyMatches) {
                         System.out.println("You have match(es)!\n");
@@ -228,16 +233,21 @@ public class GoFish {
                     }
 
                 }
-            } else if (choice.equals("2")) {
+            } else if (choice.equals("2")) {        // ASK FOR CARD
                 game.fishForCard(game.myHand);
 
-            } else if (choice.equals("3")) {
+            } else if (choice.equals("3")) {        // VIEW MY MATCHES
                 System.out.println(game.displayMatches(game.myMatches));
-            }
 
+            } else if (choice.equals("4")) {        // VIEW OPPONENT MATCHES
+                game.sortHand(game.opponentHand);
+                game.checkMatches(game.opponentHand, game.opponentMatches); // any matches? if so pring
+                System.out.println();
+                System.out.println(game.displayMatches(game.opponentMatches));
+                System.out.println();
 
-            if (game.myMatches.size() + game.opponentMatches.size() == 13) {
-                break;
+            } else {
+                System.out.println("Invalid input.");
             }
 
 
