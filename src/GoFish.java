@@ -6,8 +6,8 @@ public class GoFish {
     private ArrayList<Card> availableCards = new ArrayList<>();
     private ArrayList<Card> myHand = new ArrayList<>();
     private ArrayList<Card> opponentHand = new ArrayList<>();
-    private ArrayList<Card> myMatches = new ArrayList<>();
-    private ArrayList<Card> opponentMatches = new ArrayList<>();
+    private ArrayList<Integer> myMatches = new ArrayList<>();
+    private ArrayList<Integer> opponentMatches = new ArrayList<>();
     private boolean noCards = false;
 
     public GoFish() {
@@ -35,23 +35,15 @@ public class GoFish {
             suit++;
         }
 
-        // CREATING HANDS
-
-        for (int i = 0; i < 7; i++) {
-            fishForCard(myHand);
-            fishForCard(opponentHand);
-        }
-
     }
 
-    public String displayHand(ArrayList<Card> hand) {
-
+    public void sortHand(ArrayList<Card> hand) {
         // BUBBLE SORT - puts cards in order
 
         for (int i = 0; i < hand.size() - 1; i++) {
 
             for (int j = 1; j < hand.size() - i; j++) {
-                if (hand.get(j - 1).getNum() > hand.get(j).getNum()) {
+                if (hand.get(j - 1).getNum() > hand.get(j).getNum()) { // swapping
                     Card temp = hand.get(j - 1);
                     hand.set(j - 1, hand.get(j));
                     hand.set(j, temp);
@@ -59,14 +51,17 @@ public class GoFish {
             }
         }
 
+    }
+
+    public String displayHand(ArrayList<Card> hand) {
         // HAND DISPLAY
 
         String currentCards = "";
         int cardCount = 0;
 
-        for (int i = 0; i < hand.size(); i++) {
-            if (cardCount == 6) {
-                System.out.println();
+        for (int i = 0; i < hand.size(); i++) { // printing each card
+            if (cardCount == 6) { // line limit
+                currentCards += "\n";
                 cardCount = 0;
             }
 
@@ -74,25 +69,55 @@ public class GoFish {
             cardCount++;
         }
 
-        currentCards = currentCards.substring(0, currentCards.length() - 2);
+        currentCards = currentCards.substring(0, currentCards.length() - 2); // removing end comma and space
         return currentCards;
+    }
+
+    public String displayMatches(ArrayList<Integer> matches) {
+        // HAND DISPLAY
+
+        String currentCards = "";
+        int cardCount = 0;
+
+        for (int i = 0; i < matches.size(); i++) { // printing each card
+            if (cardCount == 10) { // line limit
+                System.out.println();
+                cardCount = 0;
+            }
+
+            String match = "";
+            if (matches.get(i) == 11) {
+                match = "Jack";
+            } else if (matches.get(i) == 12) {
+                match = "Queen";
+            } else if (matches.get(i) == 13) {
+                match = "King";
+            } else {
+                match = matches.get(i).toString();
+            }
+
+            currentCards += (matches.get(i) + ", ");
+            cardCount++;
+        }
+
+        if (cardCount != 0) {
+            currentCards = currentCards.substring(0, currentCards.length() - 2); // removing end comma and space
+            return currentCards;
+        } else {
+            return ("You don't have any matches yet.");
+        }
+
     }
 
     public Card fishForCard(ArrayList<Card> hand) {
         Random generator = new Random();
         int randomIndex = 0;
+
         if (!availableCards.isEmpty()) {
             randomIndex = generator.nextInt(availableCards.size());
-        } else {
+        } else { // is empty, no more cards in deck
             noCards = true;
             return null;
-        }
-
-        int numRun = 0;
-
-        while(availableCards.get(randomIndex) == null && numRun < 52) {
-            randomIndex = generator.nextInt(availableCards.size());
-            numRun++;
         }
 
         Card newCard = availableCards.get(randomIndex);
@@ -102,13 +127,34 @@ public class GoFish {
         return newCard;
     }
 
-    public void checkMatches(ArrayList<Card> hand) {
-        int matchCount = 0;
+    public boolean checkMatches(ArrayList<Card> hand, ArrayList<Integer> matches) {
+        boolean anyMatches = false;
+        int matchCount = 1;
 
-        for (int i = 0; i < myHand.size(); i++) {
-            if (matchCount == 4);
-            //if ()
+        for (int i = 0; i < myHand.size(); i++) { // each number in hand
+            if (myHand.size() - i > 3) {
+                for (int j = 1; j < 4; j++) { // compares to every number after
+                    if (hand.get(i).getNum() == hand.get(i + j).getNum()) {
+                        matchCount++;
+                    } else {
+                        break;
+                    }
+
+                    if (matchCount == 4) {
+                        matches.add(myHand.get(i).getNum());
+                        for (int k = 0; k < 4; k++) {
+                            myHand.remove(i);
+                        }
+                        matchCount = 1;
+                        anyMatches = true;
+                    }
+                }
+                i += matchCount - 1;
+                matchCount = 1;
+            }
         }
+
+        return anyMatches;
     }
 
     public static void main(String[] args) {
@@ -122,16 +168,19 @@ public class GoFish {
 
         System.out.println("Welcome to Go Fish!");
 
+        // GAME START MENU
+
         do {
             System.out.println("Start game? (y/n)");
             response = scanner.nextLine();
 
-            if (response.toLowerCase().equals("y") || response.toLowerCase().equals("yes")) {
+            if (response.toLowerCase().equals("y") || response.toLowerCase().equals("yes")) { // starting game
                 break;
-            } else if (response.toLowerCase().equals("n") || response.toLowerCase().equals("no")) {
-                System.out.println("Okay, take your time. I guess.\n\n\n");
-            } else {
 
+            } else if (response.toLowerCase().equals("n") || response.toLowerCase().equals("no")) { // redo loop
+                System.out.println("Okay, take your time. I guess.\n\n\n");
+
+            } else { // invalid input
                 if (dumbCounter >= 3) {
                     System.out.println("That's it. You're too dumb to play this game. No Go Fish for you.");
                     return;
@@ -142,18 +191,50 @@ public class GoFish {
             }
         } while (true);
 
-        System.out.println("\nOkay cool, I'll start the game for you now.......");
+        System.out.println("\nOkay cool, I'll start the game for you now.......\n");
+
+        // CREATING HANDS
+
+        for (int i = 0; i < 24; i++) {
+            game.fishForCard(game.myHand);
+            //game.fishForCard(game.opponentHand);
+        }
+
+        // TURN LOOP
 
         do {
+            String choice = "";
 
-            if (game.myHand.isEmpty()) {
-                System.out.println("You have no cards!");
-            } else {
-                System.out.println("This is your hand:");
-                System.out.printf(game.displayHand(game.myHand));
+            System.out.println("1) View hand   2) Ask for card   3) View my matches   4) View my matches");
+            choice = scanner.nextLine();
+
+            if (choice.equals("1")) {
+                if (game.myHand.isEmpty()) {
+                    System.out.println("You have no cards.");
+                } else {
+                    System.out.println("\nThis is your hand:"); // printing hand
+                    game.sortHand(game.myHand);
+                    System.out.printf(game.displayHand(game.myHand));
+
+                    System.out.println(); // new line
+
+                    boolean anyMatches = game.checkMatches(game.myHand, game.myMatches); // any matches? if so pring
+                    System.out.println();
+                    if (anyMatches) {
+                        System.out.println("You have match(es)!\n");
+                    } else {
+                        System.out.println("no current matches.\n");
+                    }
+
+                }
+            } else if (choice.equals("3")) {
+                System.out.println(game.displayMatches(game.myMatches));
             }
-            break;
 
+
+            if (game.myMatches.size() + game.opponentMatches.size() == 13) {
+                break;
+            }
 
 
         } while (true);
